@@ -14,7 +14,7 @@ from skimage.morphology import skeletonize
 IMG_HEIGHT = 135
 IMG_WIDTH = 240
 # Angle of the Camera Mount
-ANGLE = 38.7
+ANGLE = 50
 # Copensation for Warp
 LEFT_COMP = (ANGLE/45)
 RIGHT_COMP = 1-LEFT_COMP
@@ -114,10 +114,10 @@ while eyel and eyer is not None:
 
     imgl = img_as_ubyte(imgl)
     imgr = img_as_ubyte(imgr)
-    circlesl = cv2.HoughCircles(imgl, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=17, minRadius=11,
-                                maxRadius=31)
-    circlesr = cv2.HoughCircles(imgr, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=17, minRadius=11,
-                                maxRadius=31)
+    circlesl = cv2.HoughCircles(imgl, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=20, minRadius=17,
+                                maxRadius=61)
+    circlesr = cv2.HoughCircles(imgr, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=20, minRadius=17,
+                                maxRadius=61)
 
     if circlesl is not None:
         circlesl = np.round(circlesl[0, :]).astype("int")
