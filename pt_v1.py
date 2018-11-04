@@ -16,17 +16,17 @@ def adjust_sharpness(imgIn):
     kernel = kernel - boxFilter
     custom = cv2.filter2D(imgIn, -1, kernel)
     return custom
-"""
+
 # Argument parsing eye video
 ap = argparse.ArgumentParser()
 ap.add_argument("-v", "--video", required=True, help="path to video", )
 args = vars(ap.parse_args())
-"""
+
 # Recieveing stream and parsing to opencv
-vs = cv2.VideoCapture('http://192.168.43.253:8000/eyel.mjpeg')
+#vs = cv2.VideoCapture('http://192.168.43.253:8000/eyel.mjpeg')
 
 # Argument Video Feeding
-#vs = cv2.VideoCapture(args["video"])
+vs = cv2.VideoCapture(args["video"])
 
 a = 0
 while vs is not None:
