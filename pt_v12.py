@@ -10,6 +10,37 @@ from skimage import img_as_bool
 from skimage import img_as_ubyte
 from skimage.morphology import skeletonize
 
+import sys,tty,termios
+class _Getch:
+    def __call__(self):
+            fd = sys.stdin.fileno()
+            old_settings = termios.tcgetattr(fd)
+            try:
+                tty.setraw(sys.stdin.fileno())
+                ch = sys.stdin.read(3)
+            finally:
+                termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+            return ch
+
+def get():
+        inkey = _Getch()
+        """
+        while(1):
+                k=inkey()
+                if k!='':break
+        """
+        if k=='\x1b[A':
+                return "up"
+        elif k=='\x1b[B':
+                return "down"
+        elif k=='\x1b[C':
+                return "right"
+        elif k=='\x1b[D':
+                return "left"
+        else:
+                return "0"
+
+
 # image resolution to be processed
 IMG_HEIGHT = 135
 IMG_WIDTH = 240
@@ -47,11 +78,13 @@ eyel = cv2.VideoCapture('http://192.168.43.42:8080/eyel.mjpg')
 eyel = cv2.VideoCapture(argsl["lvideo"])
 eyer = cv2.VideoCapture(argsl["rvideo"])
 
-
 # Direct video linking
-eyel = cv2.VideoCapture("/Users/paulmathai/Desktop/Eye-Tracking-Videos/trial3.mp4")
-eyer = cv2.VideoCapture("/Users/paulmathai/Desktop/Eye-Tracking-Videos/asdf.mp4")
+eyel = cv2.VideoCapture("PI-Streaming/pi_cam_stream.py")
+eyer = cv2.VideoCapture("PI-Streaming/pi_cam_stream.py")
 """
+change_r1 = 17
+change_r2 = 61
+arr = [change_r1, change_r2]
 a = 0
 while eyel and eyer is not None:
     a = a + 1
@@ -114,10 +147,23 @@ while eyel and eyer is not None:
 
     imgl = img_as_ubyte(imgl)
     imgr = img_as_ubyte(imgr)
-    circlesl = cv2.HoughCircles(imgl, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=20, minRadius=17,
-                                maxRadius=61)
-    circlesr = cv2.HoughCircles(imgr, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=20, minRadius=17,
-                                maxRadius=61)
+    a = get()
+
+    active = change_r1
+    if(a == "left"):
+        active = 0
+    elif(a == "right"):
+        active = 1
+    elif(a == "up"):
+        arr[active] = arr[active] + 1
+    elif(a == "down"):
+        arr[active] = arr[active] - 1
+
+
+    circlesl = cv2.HoughCircles(imgl, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=20, minRadius=arr[0],
+                                maxRadius=arr[1])
+    circlesr = cv2.HoughCircles(imgr, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=20, minRadius=arr[0],
+                                maxRadius=arr[1])
 
     if circlesl is not None:
         circlesl = np.round(circlesl[0, :]).astype("int")
@@ -131,6 +177,8 @@ while eyel and eyer is not None:
             cv2.putText(addedl, 'x:' + str(x), (20, 20), font, 0.6, (255, 255, 255), 1)
             cv2.putText(addedl, 'y:' + str(y), (20, 40), font, 0.6, (255, 255, 255), 1)
             cv2.putText(addedl, 'r:' + str(r), (20, 60), font, 0.6, (255, 255, 255), 1)
+            cv2.putText(addedl, 'max_radius:' + str(arr[1]), (20, 80), font, 0.6, (255, 255, 255), 1)
+            cv2.putText(addedl, 'min_radius:' + str(arr[0]), (20, 100), font, 0.6, (255, 255, 255), 1)
     if circlesr is not None:
         circlesr = np.round(circlesr[0, :]).astype("int")
         for (x, y, r) in circlesr:
