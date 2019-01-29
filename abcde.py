@@ -1,88 +1,3 @@
-"""
-from win32api import GetKeyState
-import threading
-import time
-
-
-def key_down(key):
-        state = GetKeyState(key)
-        if (state != 0) and (state != 1):
-            return True
-        else:
-            return False
-
-
-def starter():
-    while True:
-        if key_down(0x31):
-            print("pressed 1")
-        time.sleep(0.02)
-
-
-def in_new_thread():
-    th = threading.Thread(target=starter)
-    th.start()
-
-in_new_thread()
-"""
-"""
-import Tkinter as tk
-def keypress(event):
-    if event.keysym == 'Escape':
-        root.destroy()
-    x = event.char
-    if x == "w":
-        print "blaw blaw blaw"
-    elif x == "a":
-        print "blaha blaha blaha"
-    elif x == "s":
-        print "blash blash blash"
-    elif x == "d":
-        print "blad blad blad"
-    else:
-        print x
-root = tk.Tk()
-print "Press a key (Escape key to exit):"
-root.bind_all('<Key>', keypress)
-# don't show the tk window
-root.withdraw()
-root.mainloop()
-"""
-"""
-import curses
-
-def main(stdscr):
-    # do not wait for input when calling getch
-    arr = [17,61]
-    active = 0
-    stdscr.nodelay(1)
-    while True:
-        # get keyboard input, returns -1 if none available
-        c = stdscr.getch()
-        if c != -1:
-            # print numeric value
-            #stdscr.addstr(str(c) + ' ')
-            if(c == 258):
-                arr[active] -= 1
-            elif(c==259):
-                arr[active] += 1
-            elif(c == 260):
-                active = 0
-            elif(c == 261):
-                active = 1
-            print(arr[active])
-            stdscr.refresh()
-            # return curser to start position
-            stdscr.move(0, 0)
-
-if __name__ == '__main__':
-    curses.wrapper(main)
-"""
-# Author: Paul Mathai
-# Version: 1.1
-# Features: Hough Circles
-#           Multi-Camera Support
-
 import argparse
 import cv2
 import numpy as np
@@ -137,6 +52,7 @@ def main(stdscr):
     arr = [17,61]
     active = 0
     stdscr.nodelay(1)
+    a = 0
     while eyel and eyer is not None:
         a = a + 1
         (grabbedl, framel) = eyel.read()
