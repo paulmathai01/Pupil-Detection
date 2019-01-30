@@ -1,8 +1,10 @@
 # Author: Paul Mathai
-# Version: 1.1
+# Co-Author: Rahul Raghunadhan, Akash Smaran, Pranjal Srivastava
+# Version: 1.2
 # Features: Hough Circles
-#           Multi-Camera Support
-
+#           Multi-Camera Support(Stereo)
+#           Live Radius Calibration    
+#           
 import argparse
 import cv2
 import numpy as np
@@ -19,8 +21,6 @@ def adjust_sharpness(imgIn):
     kernel = kernel - boxFilter
     custom = cv2.filter2D(imgIn, -1, kernel)
     return custom
-
-################################
 
 """
 # Argument parsing Left eye video
@@ -41,7 +41,7 @@ def main(stdscr):
     # Argument Video Feeding
     eyel = cv2.VideoCapture(argsl["lvideo"])
     eyer = cv2.VideoCapture(argsl["rvideo"])
-"""
+    """
     # Direct video linking
     eyel = cv2.VideoCapture("/Users/paulmathai/python-virtual-enviorments/PupilDetection/Eye-Tracking-Videos/trial3.mp4")
     eyer = cv2.VideoCapture("/Users/paulmathai/python-virtual-enviorments/PupilDetection/Eye-Tracking-Videos/trial3.mp4")
