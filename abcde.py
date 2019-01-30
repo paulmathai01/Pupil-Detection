@@ -5,6 +5,8 @@ from skimage import img_as_bool
 from skimage import img_as_ubyte
 from skimage.morphology import skeletonize
 import curses
+from time import gmtime, strftime
+import time
 
 
 def adjust_sharpness(imgIn):
@@ -30,8 +32,8 @@ argsr = vars(apr.parse_args())
 """
 def main(stdscr):
     # Recieveing stream and parsing to opencv
-    eyer = cv2.VideoCapture('http://192.168.43.253:8000/eyer.mjpg')
-    eyel = cv2.VideoCapture('http://192.168.43.42:8080/eyel.mjpg')
+    #eyer = cv2.VideoCapture('http://192.168.43.253:8000/eyer.mjpg')
+    #eyel = cv2.VideoCapture('http://192.168.43.42:8080/eyel.mjpg')
     """
     # Argument Video Feeding
     eyel = cv2.VideoCapture(argsl["lvideo"])
@@ -41,16 +43,20 @@ def main(stdscr):
     eyel = cv2.VideoCapture("PI-Streaming/pi_cam_stream.py")
     eyer = cv2.VideoCapture("PI-Streaming/pi_cam_stream.py")
     """
+    eyel = cv2.VideoCapture(0)
+    eyer = eyel
     IMG_HEIGHT = 135
     IMG_WIDTH = 240
     # Angle of the Camera Mount
-    ANGLE = 60
+    ANGLE = 50
     # Copensation for Warp
     LEFT_COMP = (ANGLE/45)
     RIGHT_COMP = 1-LEFT_COMP
 
-    out = cv2.VideoWriter('output.avi', -1, 20.0, (640,480))
-    out1 = cv2.VideoWriter('output1.avi', -1, 20.0, (640,480))
+    showtime = time.asctime(time.localtime(time.time()))
+    fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+    outl = cv2.VideoWriter(showtime+'_l.mp4', fourcc, 20.0, (640,480))
+    outr = cv2.VideoWriter(showtime+'_r.mp4', fourcc, 20.0, (640,480))
     
     arr = [17,61]
     active = 0
@@ -61,8 +67,8 @@ def main(stdscr):
         a = a + 1
         (grabbedl, framel) = eyel.read()
         (grabbedr, framer) = eyer.read()
-        out.write(framel)
-        out1.write(framer)
+        outl.write(framel)
+        outr.write(framer)
 
         framel = cv2.resize(framel, (IMG_WIDTH, IMG_HEIGHT))
         framer = cv2.resize(framer, (IMG_WIDTH, IMG_HEIGHT))
