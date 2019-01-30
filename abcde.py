@@ -49,14 +49,20 @@ def main(stdscr):
     LEFT_COMP = (ANGLE/45)
     RIGHT_COMP = 1-LEFT_COMP
 
+    out = cv2.VideoWriter('output.avi', -1, 20.0, (640,480))
+    out1 = cv2.VideoWriter('output1.avi', -1, 20.0, (640,480))
+    
     arr = [17,61]
     active = 0
     stdscr.nodelay(1)
     a = 0
+    
     while eyel and eyer is not None:
         a = a + 1
         (grabbedl, framel) = eyel.read()
         (grabbedr, framer) = eyer.read()
+        out.write(framel)
+        out1.write(framer)
 
         framel = cv2.resize(framel, (IMG_WIDTH, IMG_HEIGHT))
         framer = cv2.resize(framer, (IMG_WIDTH, IMG_HEIGHT))
