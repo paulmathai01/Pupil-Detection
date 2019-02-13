@@ -11,10 +11,10 @@ from skimage import img_as_ubyte
 from skimage.morphology import skeletonize
 
 # image resolution to be processed
-IMG_HEIGHT = 135
-IMG_WIDTH = 240
+IMG_HEIGHT = 180
+IMG_WIDTH = 320
 # Angle of the Camera Mount
-ANGLE = 60
+ANGLE = 50
 # Copensation for Warp
 LEFT_COMP = (ANGLE/45)
 RIGHT_COMP = 1-LEFT_COMP
@@ -40,8 +40,8 @@ argsr = vars(apr.parse_args())
 """
 
 # Recieveing stream and parsing to opencv
-eyer = cv2.VideoCapture('http://192.168.43.253:8000/eyer.mjpg')
-eyel = cv2.VideoCapture('http://192.168.43.42:8080/eyel.mjpg')
+eyer = cv2.VideoCapture('http://192.168.43.136:8000/eyer.mjpg')
+eyel = cv2.VideoCapture('http://192.168.43.86:8080/eyel.mjpg')
 """
 # Argument Video Feeding
 eyel = cv2.VideoCapture(argsl["lvideo"])

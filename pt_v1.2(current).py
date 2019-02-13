@@ -12,6 +12,8 @@ from skimage import img_as_bool
 from skimage import img_as_ubyte
 from skimage.morphology import skeletonize
 import curses
+from time import gmtime, strftime
+import time
 
 
 def adjust_sharpness(imgIn):
@@ -22,12 +24,13 @@ def adjust_sharpness(imgIn):
     custom = cv2.filter2D(imgIn, -1, kernel)
     return custom
 
+################################
+
 """
 # Argument parsing Left eye video
 apl = argparse.ArgumentParser()
 apl.add_argument("-lv", "--lvideo", required=True, help="path to left video", )
 argsl = vars(apl.parse_args())
-
 # Argument parsing Right eye video
 apr = argparse.ArgumentParser()
 apr.add_argument("-rv", "--rvideo", required=False, help="path to right video", )
@@ -35,33 +38,42 @@ argsr = vars(apr.parse_args())
 """
 def main(stdscr):
     # Recieveing stream and parsing to opencv
-    #eyer = cv2.VideoCapture('http://192.168.43.253:8000/eyer.mjpg')
-    #eyel = cv2.VideoCapture('http://192.168.43.42:8080/eyel.mjpg')
+    eyer = cv2.VideoCapture('http://192.168.43.136:8000/eyer.mjpg')
+    eyel = cv2.VideoCapture('http://192.168.43.86:8080/eyel.mjpg')
     """
     # Argument Video Feeding
     eyel = cv2.VideoCapture(argsl["lvideo"])
     eyer = cv2.VideoCapture(argsl["rvideo"])
-    """
     # Direct video linking
-    eyel = cv2.VideoCapture("/Users/paulmathai/python-virtual-enviorments/PupilDetection/Eye-Tracking-Videos/trial3.mp4")
-    eyer = cv2.VideoCapture("/Users/paulmathai/python-virtual-enviorments/PupilDetection/Eye-Tracking-Videos/trial3.mp4")
-    
-    IMG_HEIGHT = 135
-    IMG_WIDTH = 240
+    eyel = cv2.VideoCapture("PI-Streaming/pi_cam_stream.py")
+    eyer = cv2.VideoCapture("PI-Streaming/pi_cam_stream.py")
+    """
+    #eyel = cv2.VideoCapture(0)
+    #eyer = eyel
+    IMG_HEIGHT = 180
+    IMG_WIDTH = 320
     # Angle of the Camera Mount
-    ANGLE = 60
+    ANGLE = 50
     # Copensation for Warp
     LEFT_COMP = (ANGLE/45)
     RIGHT_COMP = 1-LEFT_COMP
 
+    showtime = time.asctime(time.localtime(time.time()))
+    fourcc = cv2.VideoWriter_fourcc(*'MJPG')
+    outl = cv2.VideoWriter(showtime+'_l.mp4', fourcc, 20.0, (640,480))
+    outr = cv2.VideoWriter(showtime+'_r.mp4', fourcc, 20.0, (640,480))
+    
     arr = [17,61]
     active = 0
     stdscr.nodelay(1)
-    a=0
+    a = 0
+    
     while eyel and eyer is not None:
         a = a + 1
         (grabbedl, framel) = eyel.read()
         (grabbedr, framer) = eyer.read()
+        outl.write(framel)
+        outr.write(framer)
 
         framel = cv2.resize(framel, (IMG_WIDTH, IMG_HEIGHT))
         framer = cv2.resize(framer, (IMG_WIDTH, IMG_HEIGHT))
