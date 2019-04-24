@@ -27,7 +27,7 @@ def adjust_sharpness(imgIn):
     custom = cv2.filter2D(imgIn, -1, kernel)
     return custom
 
-"""
+
 # Argument parsing Left eye video
 apl = argparse.ArgumentParser()
 apl.add_argument("-lv", "--lvideo", required=True, help="path to left video", )
@@ -37,17 +37,17 @@ argsl = vars(apl.parse_args())
 apr = argparse.ArgumentParser()
 apr.add_argument("-rv", "--rvideo", required=False, help="path to right video", )
 argsr = vars(apr.parse_args())
-"""
+
 
 # Recieveing stream and parsing to opencv
-eyer = cv2.VideoCapture('http://192.168.43.136:8000/eyer.mjpg')
-eyel = cv2.VideoCapture('http://192.168.43.86:8080/eyel.mjpg')
-"""
-# Argument Video Feeding
+# eyer = cv2.VideoCapture('http://192.168.43.136:8000/eyer.mjpg')
+# eyel = cv2.VideoCapture('http://192.168.43.86:8080/eyel.mjpg')
+
+#Argument Video Feeding
 eyel = cv2.VideoCapture(argsl["lvideo"])
 eyer = cv2.VideoCapture(argsl["rvideo"])
 
-
+"""
 # Direct video linking
 eyel = cv2.VideoCapture("/Users/paulmathai/Desktop/Eye-Tracking-Videos/trial3.mp4")
 eyer = cv2.VideoCapture("/Users/paulmathai/Desktop/Eye-Tracking-Videos/asdf.mp4")

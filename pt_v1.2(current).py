@@ -5,15 +5,14 @@
 #           Multi-Camera Support(Stereo)
 #           Live Radius Calibration    
 #           
-import argparse
+import curses
+import time
+
 import cv2
 import numpy as np
 from skimage import img_as_bool
 from skimage import img_as_ubyte
 from skimage.morphology import skeletonize
-import curses
-from time import gmtime, strftime
-import time
 
 
 def adjust_sharpness(imgIn):
@@ -23,6 +22,7 @@ def adjust_sharpness(imgIn):
     kernel = kernel - boxFilter
     custom = cv2.filter2D(imgIn, -1, kernel)
     return custom
+
 
 ################################
 
@@ -36,6 +36,8 @@ apr = argparse.ArgumentParser()
 apr.add_argument("-rv", "--rvideo", required=False, help="path to right video", )
 argsr = vars(apr.parse_args())
 """
+
+
 def main(stdscr):
     # Recieveing stream and parsing to opencv
     eyer = cv2.VideoCapture('http://192.168.43.136:8000/eyer.mjpg')
@@ -48,26 +50,26 @@ def main(stdscr):
     eyel = cv2.VideoCapture("PI-Streaming/pi_cam_stream.py")
     eyer = cv2.VideoCapture("PI-Streaming/pi_cam_stream.py")
     """
-    #eyel = cv2.VideoCapture(0)
-    #eyer = eyel
+    # eyel = cv2.VideoCapture(0)
+    # eyer = eyel
     IMG_HEIGHT = 180
     IMG_WIDTH = 320
     # Angle of the Camera Mount
     ANGLE = 50
     # Copensation for Warp
-    LEFT_COMP = (ANGLE/45)
-    RIGHT_COMP = 1-LEFT_COMP
+    LEFT_COMP = (ANGLE / 45)
+    RIGHT_COMP = 1 - LEFT_COMP
 
     showtime = time.asctime(time.localtime(time.time()))
     fourcc = cv2.VideoWriter_fourcc(*'MJPG')
-    outl = cv2.VideoWriter(showtime+'_l.mp4', fourcc, 20.0, (640,480))
-    outr = cv2.VideoWriter(showtime+'_r.mp4', fourcc, 20.0, (640,480))
-    
-    arr = [17,61]
+    outl = cv2.VideoWriter(showtime + '_l.mp4', fourcc, 20.0, (640, 480))
+    outr = cv2.VideoWriter(showtime + '_r.mp4', fourcc, 20.0, (640, 480))
+
+    arr = [17, 61]
     active = 0
     stdscr.nodelay(1)
     a = 0
-    
+
     while eyel and eyer is not None:
         a = a + 1
         (grabbedl, framel) = eyel.read()
@@ -131,27 +133,29 @@ def main(stdscr):
 
         imgl = img_as_ubyte(imgl)
         imgr = img_as_ubyte(imgr)
-        #a = get()
+        # a = get()
 
         c = stdscr.getch()
         if c != -1:
             # print numeric value
-            #stdscr.addstr(str(c) + ' ')
-            if(c == 258):
+            # stdscr.addstr(str(c) + ' ')
+            if c == 258:
                 arr[active] -= 1
-            elif(c==259):
+            elif c == 259:
                 arr[active] += 1
-            elif(c == 260):
+            elif c == 260:
                 active = 0
-            elif(c == 261):
+            elif c == 261:
                 active = 1
             stdscr.refresh()
             # return curser to start position
             stdscr.move(0, 0)
 
-        circlesl = cv2.HoughCircles(imgl, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=20, minRadius=arr[0],
+        circlesl = cv2.HoughCircles(imgl, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=20,
+                                    minRadius=arr[0],
                                     maxRadius=arr[1])
-        circlesr = cv2.HoughCircles(imgr, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=20, minRadius=arr[0],
+        circlesr = cv2.HoughCircles(imgr, cv2.HOUGH_GRADIENT, 1, minDist=1200000, param1=50, param2=20,
+                                    minRadius=arr[0],
                                     maxRadius=arr[1])
 
         if circlesl is not None:
@@ -160,7 +164,7 @@ def main(stdscr):
                 if x > (IMG_WIDTH * 0.3) and (IMG_HEIGHT * 0) < y < (IMG_HEIGHT * 1):
                     cv2.circle(addedl, (x, y), r, (255, 255, 255), 1)
                     cv2.rectangle(addedl, (x - 5, y - 5), (x + 5, y + 5),
-                                (255, 255, 255), 1)
+                                  (255, 255, 255), 1)
                     print("[INFO] Computing for Left (", x, ",", y, ",", r, ")")
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 cv2.putText(addedl, 'x:' + str(x), (20, 20), font, 0.6, (255, 255, 255), 1)
@@ -174,7 +178,7 @@ def main(stdscr):
                 if x > (IMG_WIDTH * 0) and (IMG_HEIGHT * 0) < y < (IMG_HEIGHT * 1):
                     cv2.circle(addedr, (x, y), r, (255, 255, 255), 1)
                     cv2.rectangle(addedr, (x - 5, y - 5), (x + 5, y + 5),
-                                (255, 255, 255), 1)
+                                  (255, 255, 255), 1)
                     print("[INFO] Computing for Right (", x, ",", y, ",", r, ")")
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 cv2.putText(addedr, 'x:' + str(x), (20, 20), font, 0.6, (255, 255, 255), 1)
@@ -190,6 +194,7 @@ def main(stdscr):
 
     cv2.destroyAllWindows()
     eyel.stop()
+
 
 if __name__ == '__main__':
     curses.wrapper(main)
